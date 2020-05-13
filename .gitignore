@@ -1,3 +1,4 @@
 
 key.txt
 logs/logs.csv
+*.pyc
