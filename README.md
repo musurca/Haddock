@@ -15,9 +15,14 @@ Queries the Sailaway servers for information on your boats, and logs their posit
 ```
 pip install rich
 git clone https://github.com/musurca/Haddock.git
+cd Haddock/
 ```
 
-3) Open up `key.txt` in the repository, and paste in your Sailaway API URL. You can find it by logging into your [Sailaway account](https://sailaway.world/myaccount.pl) and copying the URL below the line that reads "API access to all sailing related parameters of your boats."
+3) Log into your [Sailaway account](https://sailaway.world/myaccount.pl) and copy the URL below the line that reads "API access to all sailing related parameters of your boats."
+
+![API Example](https://github.com/musurca/Icarus/raw/master/img/apiexample.png)
+
+4) Open up `key.txt` in the repository, paste in your Sailaway API URL, and save it.
 
 ## Dependencies
 * [Python 3](https://www.python.org/downloads/)
