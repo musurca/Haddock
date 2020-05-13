@@ -1,3 +1,12 @@
+'''
+    haddock.py
+
+    TODO: delete log entries for defunct boats
+    TODO: more log data viz -- distance since <date>? e.g.
+    TODO: warning for excessive heeling
+    TODO: probably remove boat names from the log
+'''
+
 import os
 import sys
 import math
@@ -77,8 +86,8 @@ while True:
         boat = boats[i]
         boatSpeed = int(round(units.mps_to_kts(boat['sog']),0))
         windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
-        windDirection = boat['twd']
-        windAngle = wrap_angle(180+windDirection)
+        windDirection = wrap_angle(boat['twd'])
+        #windAngle = wrap_angle(180+windDirection)
         windForce = windSpeedToForceLevel(windSpeed)
         windForceStr = windForceToDesc(windForce)
         # sometimes these values are negative!
@@ -86,8 +95,8 @@ while True:
 
         boatLat, boatLon = geo.latlon_to_str(boat['latitude'], boat['longitude'])
 
-        boatHdg = boat['cog']
-        headingTxt = headingDesc(wrap_angle(boatHdg))
+        boatHdg = wrap_angle(boat['cog'])
+        headingTxt = headingDesc(boatHdg)
 
         voyageStr = boat['voyage']
         voyDiv = voyageStr.find(" -> ")
@@ -97,7 +106,7 @@ while True:
         console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
         console.print(Markdown("**Destination:**\t" + dest))
         console.print(Markdown("**Position:**\t" + boatLat + ", " + boatLon))
-        console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + forceDescription[windForce] + ", winds " + str(int(round(windDirection,0))) + "° (" + headingDesc(windAngle) + ") at " + str(round(windSpeed,1)) + " knots "))
+        console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + forceDescription[windForce] + " from " + headingDesc(windDirection) + " at " + str(round(windSpeed,1)) + " knots "))
         console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt))
         logbook.write(logTime, boat)
         print("")
