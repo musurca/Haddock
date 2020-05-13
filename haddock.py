@@ -4,6 +4,8 @@
     TODO: delete log entries for defunct boats
     TODO: more log data viz -- distance since <date>? e.g.
     TODO: probably remove boat names from the log
+    TODO: compress log with zlib
+    TODO: for destructive log changes, do work in temp then copy over
 '''
 
 import os
@@ -114,16 +116,20 @@ while True:
         logbook.write(logTime, boat)
         print("")
 
-    boatNum = input("Enter boat # (or press return to quit): ")
-    try:
-        boatNum = int(boatNum)
-    except ValueError:
-        sys.exit()
+    if len(boats) > 1:
+        boatNum = input("Enter boat # (or press return to quit): ")
+        try:
+            boatNum = int(boatNum)
+        except ValueError:
+            sys.exit()
+    else:
+        boatNum = 0
 
     if boatNum >= 0 and boatNum < len(boats):
         boat = boats[boatNum]
         while True:
-            console.print(Markdown("# *" + boat['boatname'] + "* - " + boat['boattype']))
+            if len(boats) > 1:
+                console.print(Markdown("# *" + boat['boatname'] + "* - " + boat['boattype']))
             console.print(Markdown("**(1)** `Read the logbook`"))
             console.print(Markdown("**(2)** `Plot position on OpenSeaMap`"))
             console.print(Markdown("**(3)** `Plot position on EarthWindMap`"))
