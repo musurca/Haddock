@@ -57,7 +57,7 @@ def headingDesc(h):
         if withinAngleRange(h, i*22.5, 11.25):
             return headingNames[i]
 
-def sailAttitudeDesc(windAng, bHdg):
+def sailAttitudeDesc(windAng):
     for i in range(len(sailAttitudes)):
         if withinAngleRange(windAng, i*30, 30):
             return sailAttitudes[i]
@@ -81,12 +81,13 @@ while True:
         windAngle = wrap_angle(180+windDirection)
         windForce = windSpeedToForceLevel(windSpeed)
         windForceStr = windForceToDesc(windForce)
-        sailAtt = sailAttitudeDesc(boat['twa'], boat['hdg'])
+        # sometimes these values are negative!
+        sailAtt = sailAttitudeDesc(abs(boat['twa']))
 
         boatLat, boatLon = geo.latlon_to_str(boat['latitude'], boat['longitude'])
 
         boatHdg = boat['cog']
-        headingTxt = headingDesc(boatHdg)
+        headingTxt = headingDesc(wrap_angle(boatHdg))
 
         voyageStr = boat['voyage']
         voyDiv = voyageStr.find(" -> ")
@@ -130,7 +131,7 @@ while True:
                 for entry in showEntries:
                     boatLat, boatLon = geo.latlon_to_str(float(entry['lat']), float(entry['lon']))
                     console.print(Markdown("**" + log.logTimeToString(entry) + "** - *" + boatLat + ", " + boatLon + "*"))
-                    console.print(Markdown("### Heading " + headingDesc(float(entry['cog'])) + " / " + str(int(round(float(entry['sog']),0))) + " knots / " + forceDescription[windSpeedToForceLevel(float(entry['windspd']))]))
+                    console.print(Markdown("### Heading " + headingDesc(wrap_angle(float(entry['cog']))) + " / " + str(int(round(float(entry['sog']),0))) + " knots / " + forceDescription[windSpeedToForceLevel(float(entry['windspd']))]))
                     print("")
                 if len(entries) > 2:
                     firstTime = entries[0]['zulu']
