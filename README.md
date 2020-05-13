@@ -20,7 +20,7 @@ cd Haddock/
 
 3) Log into your [Sailaway account](https://sailaway.world/myaccount.pl) and copy the URL below the line that reads "API access to all sailing related parameters of your boats."
 
-![API Example](https://github.com/musurca/Icarus/raw/master/img/apiexample.png)
+![API Example](https://github.com/musurca/Haddock/raw/master/img/apiexample.png)
 
 4) Open up `key.txt` in the repository, paste in your Sailaway API URL, and save it.
 
