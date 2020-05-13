@@ -20,7 +20,15 @@ class sailaway:
             sys.exit("You must first paste your API key into key.txt.")
     
     def query(self):
-        return json.loads(requests.get(self.key).text)
+        try:
+            r = requests.get(self.key)
+        except requests.exceptions.Timeout:
+            sys.exit("Error: connection to Sailaway server timed out.")
+        except requests.exceptions.TooManyRedirects:
+            sys.exit("Error: cannot connect to Sailaway server.")
+        except requests.exceptions.RequestException as e:
+            sys.exit("Error: cannot connect to Sailaway server.")
+        return json.loads(r.text)
 
 class units:
     def mps_to_kts(mps):
