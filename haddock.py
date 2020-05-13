@@ -3,7 +3,6 @@
 
     TODO: delete log entries for defunct boats
     TODO: more log data viz -- distance since <date>? e.g.
-    TODO: warning for excessive heeling
     TODO: probably remove boat names from the log
 '''
 
@@ -97,6 +96,7 @@ while True:
 
         boatHdg = wrap_angle(boat['cog'])
         headingTxt = headingDesc(boatHdg)
+        heelAngle = abs(int(round(boat['heeldegrees'],0)))
 
         voyageStr = boat['voyage']
         voyDiv = voyageStr.find(" -> ")
@@ -107,7 +107,10 @@ while True:
         console.print(Markdown("**Destination:**\t" + dest))
         console.print(Markdown("**Position:**\t" + boatLat + ", " + boatLon))
         console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + forceDescription[windForce] + " from " + headingDesc(windDirection) + " at " + str(round(windSpeed,1)) + " knots "))
-        console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt))
+        console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt ))
+        if heelAngle >= 30:
+            print("")
+            console.print(Markdown("### WARNING: Heel angle " + str(heelAngle) + "°"))
         logbook.write(logTime, boat)
         print("")
 
