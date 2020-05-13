@@ -28,7 +28,7 @@ windForceTable = [64,56,48,41,34,27,22,17,11,7,4,1]
 # HEADINGS
 headingNames = ["north", "north by northeast", "northeast", "east by northeast", "east", "east by southeast", "southeast", "south by southeast", "south", "south by southwest", "southwest", "west by southwest", "west", "west by northwest", "northwest", "north by northwest"]
 
-sailAttitudes = ["`in irons`","beating", "on a near reach", "on a reach", "on a broad reach", "running"]
+sailAttitudes = ["`in irons`","beating", "on a close reach", "on a reach", "on a broad reach", "running"]
 
 # Converts a wind speed in knots to its corresponding Force level
 def windSpeedToForceLevel(w):
