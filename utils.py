@@ -3,6 +3,7 @@ import json
 import csv
 import math
 import sys
+import webbrowser
 from datetime import datetime, timedelta
 
 KEY_PATH = "./key.txt"
@@ -70,6 +71,9 @@ class geo:
         return 0.539957*R * c
 
 class webviz:
+    def loadURL(url):
+        webbrowser.open(url)
+
     def openseamap(lat, lon):
         return "https://map.openseamap.org/?zoom=8&lat=" + lat + "&lon=" + lon + "&mlat=" + lat + "&mlon=" + lon + "&layers=BFTFFFTFFTF0FFFFFFFFFF"
 

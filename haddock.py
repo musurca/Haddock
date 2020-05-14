@@ -177,7 +177,6 @@ while True:
                 boatLat = str(round(boat['latitude'],4))
                 boatLon = str(round(boat['longitude'],4))
                 if choice == 2:
-                    url = webviz.openseamap(boatLat, boatLon)
+                    webviz.loadURL(webviz.openseamap(boatLat, boatLon))
                 else:
-                    url = webviz.earthwindmap(boatLat, boatLon)
-                os.system("open \"" + url + "\"")
+                    webviz.loadURL(webviz.earthwindmap(boatLat, boatLon))
