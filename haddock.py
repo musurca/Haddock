@@ -26,7 +26,7 @@ forceDescription = ["calm", "light airs", "light breeze", "gentle breeze", "mode
 windForceTable = [64,56,48,41,34,27,22,17,11,7,4,1]
 
 # HEADINGS
-headingNames = ["north", "north by northeast", "northeast", "east by northeast", "east", "east by southeast", "southeast", "south by southeast", "south", "south by southwest", "southwest", "west by southwest", "west", "west by northwest", "northwest", "north by northwest"]
+headingNames = ["north", "north by northeast", "northeast", "east by northeast", "east", "east by southeast", "southeast", "south by southeast", "south", "south by southwest", "southwest", "west by southwest", "west", "west by northwest", "northwest", "north by northwest", "north"]
 
 sailAttitudes = ["`in irons`","beating", "on a close reach", "on a reach", "on a broad reach", "running"]
 
@@ -88,7 +88,6 @@ while True:
         boatSpeed = int(round(units.mps_to_kts(boat['sog']),0))
         windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
         windDirection = wrap_angle(boat['twd'])
-        #windAngle = wrap_angle(180+windDirection)
         windForce = windSpeedToForceLevel(windSpeed)
         windForceStr = windForceToDesc(windForce)
         # sometimes these values are negative!
@@ -155,6 +154,12 @@ while True:
                     firstTime = entries[0]['zulu']
                     lastTime = entries[len(entries)-1]['zulu']
                     totalTimeHrs = (lastTime - firstTime).total_seconds() / (60*60)
+
+                    if lastTime.year == firstTime.year:
+                        firstTimeStr = firstTime.strftime("%b %d")
+                    else:
+                        firstTimeStr = firstTime.strftime("%b %d, %Y")
+
                     dist = 0
                     for i in range(len(entries)-1):
                         index = i+1
@@ -162,9 +167,10 @@ while True:
                         curLat, curLon = float(curEntry['lat']), float(curEntry['lon'])
                         prevLat, prevLon = float(prevEntry['lat']), float(prevEntry['lon'])
                         dist += geo.dist_coord(curLat, curLon, prevLat, prevLon)
-                    rate = round(dist / totalTimeHrs,1)
-                    console.print(Markdown("**Distance logged:** " + str(round(dist,1)) + " nm"))
-                    console.print(Markdown("**Average speed:** " + str(rate) + " knots"))
+                    rate = dist / totalTimeHrs
+                    console.print(Markdown("**Distance since " + firstTimeStr + ":** " + str(round(dist,1)) + " nm"))
+                    console.print(Markdown("**Average speed:** " + str(round(rate,1)) + " knots"))
+                    console.print(Markdown("**Distance per day:** " + str(round(rate*24,1)) + " nm"))
                     print("")
                 input("(Press any key to continue)")
             elif choice == 2 or choice == 3:
