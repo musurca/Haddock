@@ -154,7 +154,7 @@ while True:
                 if len(entries) > 2:
                     firstTime = entries[0]['zulu']
                     lastTime = entries[len(entries)-1]['zulu']
-                    totalTimeHrs = (lastTime - firstTime).seconds / (60*60)
+                    totalTimeHrs = (lastTime - firstTime).total_seconds() / (60*60)
                     dist = 0
                     for i in range(len(entries)-1):
                         index = i+1
