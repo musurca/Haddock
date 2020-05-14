@@ -24,11 +24,11 @@ class sailaway:
         try:
             r = requests.get(self.key)
         except requests.exceptions.Timeout:
-            sys.exit("Error: connection to Sailaway server timed out.")
+            sys.exit("Error: Connection to Sailaway server timed out. Please try again later.")
         except requests.exceptions.TooManyRedirects:
-            sys.exit("Error: cannot connect to Sailaway server.")
+            sys.exit("Error: Cannot connect to Sailaway server. Please try again later.")
         except requests.exceptions.RequestException as e:
-            sys.exit("Error: cannot connect to Sailaway server.")
+            sys.exit("Error: Cannot connect to Sailaway server. Check your internet connection.")
         return json.loads(r.text)
 
 class units:
