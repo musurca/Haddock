@@ -74,15 +74,18 @@ def sailAttitudeDesc(windAng):
 
 console = Console()
 
-# get boat info from Sailaway API
+# Initialize Sailaway API
 api = sailaway()
-boats = api.query()
 
 # initialize our log
 logbook = log()
 logTime = log.zuluTime()
 
 while True:
+    if api.canUpdate():
+        # retrieve data from cache or server
+        boats = api.query()
+
     for i in range(len(boats)):
         boat = boats[i]
         boatSpeed = int(round(units.mps_to_kts(boat['sog']),0))

@@ -3,15 +3,22 @@ import json
 import csv
 import math
 import sys
+import glob
+import os
 import webbrowser
 from datetime import datetime, timedelta
 
 KEY_PATH = "./key.txt"
-LOG_PATH = "./logs/logs.csv"
+LOG_PATH = "./logs/"
+LOG_FILE = LOG_PATH + "logs.csv"
+
+# Sailaway API specifies a minimum of 10 minutes between requests
+UPDATE_INTERVAL = 600
 
 # UNIT CONVERSIONS
 MPS_TO_KTS = 1.944
 TIME_FORMAT = "%Y-%m-%d %H-%M-%S"
+REQCACHE_FORMAT = "%Y_%m_%d_%H_%M_%S"
 
 class sailaway:
     def __init__(self):
@@ -19,17 +26,73 @@ class sailaway:
         self.key = f.readline()
         if self.key == "":
             sys.exit("You must first paste your API key into key.txt.")
+        self.lastUpdate = None
+
+    # clears cache and writes latest update to it
+    def writeReqCache(self, req):
+        for file in glob.glob(LOG_PATH + "*.json"):
+            os.remove(file)
+        curTime = datetime.utcnow()
+        reqFile = open(LOG_PATH + curTime.strftime(REQCACHE_FORMAT) + ".json", "w")
+        reqFile.write(req)
+        reqFile.close()
+        self.lastUpdate = curTime
+
+    # return (last update in seconds, path to latest cache file)
+    def lastCacheFile(self):
+        newestLogTime = 99999
+        newestLog = ""
+        curTime = datetime.utcnow()
+        prevReqList = glob.glob(LOG_PATH + "*.json")
+        if len(prevReqList) > 0:
+            for f in prevReqList:
+                reqTimeStr = f[f.find(LOG_PATH)+len(LOG_PATH):f.find(".json")]
+                try:
+                    reqTime = datetime.strptime(reqTimeStr, REQCACHE_FORMAT)
+                except ValueError:
+                    continue
+                timeDiff = (curTime - reqTime).total_seconds()
+                if timeDiff < newestLogTime:
+                    newestLogTime = timeDiff
+                    newestLog = f
+                    self.lastUpdate = reqTime
+        return (newestLogTime, newestLog)
     
+    # returns true if query can be run usefully
+    def canUpdate(self):
+        if self.lastUpdate != None:
+            return (datetime.utcnow() - self.lastUpdate).total_seconds() >= UPDATE_INTERVAL
+        return True
+
     def query(self):
-        try:
-            r = requests.get(self.key)
-        except requests.exceptions.Timeout:
-            sys.exit("Error: Connection to Sailaway server timed out. Please try again later.")
-        except requests.exceptions.TooManyRedirects:
-            sys.exit("Error: Cannot connect to Sailaway server. Please try again later.")
-        except requests.exceptions.RequestException as e:
-            sys.exit("Error: Cannot connect to Sailaway server. Check your internet connection.")
-        return json.loads(r.text)
+        reqText = ""
+        # first, check cache to see how old the previous request is
+        lastTime, lastReqFile = self.lastCacheFile()
+        if lastTime < UPDATE_INTERVAL:
+            reqFile = open(lastReqFile, "r")
+            reqText = reqFile.read()
+            reqFile.close()
+        # If we didn't have any recent data cached, request it
+        if reqText == "":
+            try:
+                r = requests.get(self.key)
+            except requests.exceptions.Timeout:
+                sys.exit("Error: Connection to Sailaway server timed out. Please try again later.")
+            except requests.exceptions.TooManyRedirects:
+                sys.exit("Error: Cannot connect to Sailaway server. Please try again later.")
+            except requests.exceptions.RequestException as e:
+                sys.exit("Error: Cannot connect to Sailaway server. Check your internet connection.")
+            reqText = r.text
+            self.writeReqCache(reqText)
+        
+        boats = json.loads(reqText)
+
+        # sort boats by ID and return them
+        def sortById(b):
+            return b['ubtnr']
+        if len(boats) > 0:
+            boats.sort(key=sortById)
+        return boats
 
 class units:
     def mps_to_kts(mps):
@@ -118,7 +181,7 @@ class log:
         self.entries={}
         def addEntry(e):
             self.processEntry(e)
-        db.execute(LOG_PATH, addEntry)
+        db.execute(LOG_FILE, addEntry)
 
     def processEntry(self, e):
         e['zulu']=datetime.strptime(e['zulu'], TIME_FORMAT)
@@ -146,13 +209,13 @@ class log:
                 return
         zuluStr = zulu.strftime(TIME_FORMAT)
         entry = [boat['ubtnr'], boat['boatname'], zuluStr, boat['latitude'], boat['longitude'], boat['cog'], units.mps_to_kts(boat['sog']), units.mps_to_kts(boat['tws'])]
-        with open(LOG_PATH,"a") as csvfile:
+        with open(LOG_FILE,"a") as csvfile:
             logwriter = csv.writer(csvfile, delimiter=',')
             logwriter.writerow(entry)
         self.processEntry({'boatid':entry[0],'name':entry[1],'zulu':entry[2],'lat':entry[3],'lon':entry[4],'cog':entry[5],'sog':entry[6],'windspd':entry[7]})
 
     def wipe(self):
-        with open(LOG_PATH,"w") as csvfile:
+        with open(LOG_FILE,"w") as csvfile:
             logwriter = csv.writer(csvfile, delimiter=',')
             logwriter.writerow(['boatid','name','zulu','lat','lon','cog','sog','windspd'])
         self.entries = {}
