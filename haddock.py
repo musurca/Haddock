@@ -15,8 +15,9 @@ import math
 from rich.console import Console
 from rich.markdown import Markdown
 
+from sailaway import saillog
 from nmea import NMEAUpdater
-from utils import webviz, log, units, geo
+from utils import webviz, units, geo
 
 MAX_LOG_ENTRIES = 8
 
@@ -37,6 +38,11 @@ def windSpeedToForceLevel(w):
             return 12-i
 
 def windForceToDesc(f):
+    if f >= 0 and f < len(forceDescription):
+        return forceDescription[f]
+    return "Unknown"
+
+def windForceToStr(f):
     forceStr = "F" + str(f)
     if f > 9:
         forceStr = "`" + forceStr + "`"
@@ -78,15 +84,7 @@ while True:
     for i in range(len(boats)):
         boat = boats[i]
         boatSpeed = int(round(units.mps_to_kts(boat['sog']),0))
-        windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
-        windDirection = geo.wrap_angle(boat['twd'])
-        windForce = windSpeedToForceLevel(windSpeed)
-        windForceStr = windForceToDesc(windForce)
-        # sometimes these values are negative!
-        sailAtt = sailAttitudeDesc(abs(boat['twa']))
-
         boatLat, boatLon = geo.latlon_to_str(boat['latitude'], boat['longitude'])
-
         boatHdg = geo.wrap_angle(boat['cog'])
         headingTxt = headingDesc(boatHdg)
         heelAngle = abs(int(round(boat['heeldegrees'],0)))
@@ -96,10 +94,19 @@ while True:
         origin = voyageStr[0:voyDiv]
         dest = voyageStr[voyDiv+4:]
 
+        windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
+        windDirection = geo.wrap_angle(boat['twd'])
+        windForce = windSpeedToForceLevel(windSpeed)
+        windForceStr = windForceToStr(windForce)
+        windForceDesc = windForceToDesc(windForce)
+        windHeadingDesc = headingDesc(windDirection)
+        
+        sailAtt = sailAttitudeDesc(abs(boat['twa']))
+        
         console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
         console.print(Markdown("**Destination:**\t" + dest))
         console.print(Markdown("**Position:**\t" + boatLat + ", " + boatLon))
-        console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + forceDescription[windForce] + " from " + headingDesc(windDirection) + " at " + str(round(windSpeed,1)) + " knots "))
+        console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + windForceDesc + " from " + windHeadingDesc + " at " + str(round(windSpeed,1)) + " knots "))
         console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt ))
         if heelAngle >= 30:
             print("")
@@ -140,7 +147,7 @@ while True:
                     showEntries = entries
                 for entry in showEntries:
                     boatLat, boatLon = geo.latlon_to_str(float(entry['lat']), float(entry['lon']))
-                    console.print(Markdown("**" + log.logTimeToString(entry) + "** - *" + boatLat + ", " + boatLon + "*"))
+                    console.print(Markdown("**" + saillog.logTimeToString(entry) + "** - *" + boatLat + ", " + boatLon + "*"))
                     console.print(Markdown("### Heading " + headingDesc(geo.wrap_angle(float(entry['cog']))) + " / " + str(int(round(float(entry['sog']),0))) + " knots / " + forceDescription[windSpeedToForceLevel(float(entry['windspd']))]))
                     print("")
                 if len(entries) > 2:

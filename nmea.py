@@ -12,7 +12,8 @@ from datetime import datetime, timedelta
 from rich.console import Console
 from rich.markdown import Markdown
 
-from utils import geo, sailaway, units, log
+from sailaway import sailaway, saillog
+from utils import geo, units
 
 SERVER_ADDR = "127.0.0.1"
 SERVER_PORT = 10110
@@ -115,12 +116,14 @@ class NMEAServer:
         sGPRMC = nmea.formatSentence("GPRMC," + timeStr + ",A," + posStr + "," + sogStr + "," + cogStr + "," + dateStr + ",,,")
 
         self.sentence = sOrigin + sGPGLL + sGPGAA + sIIHDT + sWIMWV + sGPRMC
-        self.sendAll(self.sentence)
+
+        # Send sentence to all clients on a separate thread
+        threading.Thread(target=NMEAServer.sendAll, args=(self,self.sentence,)).start()
 
 class NMEAUpdater:
     def __init__(self):
         self.api = sailaway()
-        self.logbook = log()
+        self.logbook = saillog()
         self.isRunning = False
         self.updateThread = None
         self.boatNum = -1
