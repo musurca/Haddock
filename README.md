@@ -8,6 +8,8 @@ haddock
 ```
 Queries the Sailaway servers for information on your boats, and logs their position and other relevant information to a locally-stored log. You can browse your logbooks, plot your boats' position using OpenSeaMap or EarthWindMap, or send NMEA sentences from one boat to an external charting application like [qtVlm](https://www.meltemus.com/index.php/en/) or [OpenCPN](https://opencpn.org/).
 
+![Haddock screen](https://github.com/musurca/Haddock/raw/master/img/haddockscreen1.png)
+
 ```
 nmea
 ```
