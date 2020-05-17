@@ -13,7 +13,7 @@ Queries the Sailaway servers for information on your boats, and logs their posit
 You can:
 - browse your logbooks
 - plot your boats' position using OpenSeaMap or EarthWindMap
-- send NMEA sentences from one boat to an external charting application like [qtVlm](https://www.meltemus.com/index.php/en/) or [OpenCPN](https://opencpn.org/).
+- send NMEA sentences from one boat to an external charting application like [qtVlm](https://www.meltemus.com/index.php/en/) or [OpenCPN](https://opencpn.org/), via a TCP server.
   
 ![Haddock screen 2](https://github.com/musurca/Haddock/raw/master/img/haddockscreen2.png)
 
