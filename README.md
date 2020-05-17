@@ -1,11 +1,23 @@
 # Haddock
 A CLI tool for tracking Sailaway voyages.
 
+## The Tools
+
 ```
 haddock
 ```
+Queries the Sailaway servers for information on your boats, and logs their position and other relevant information to a locally-stored log. You can browse your logbooks, plot your boats' position using OpenSeaMap or EarthWindMap, or send NMEA sentences from one boat to an external charting application like [qtVlm](https://www.meltemus.com/index.php/en/) or [OpenCPN](https://opencpn.org/).
 
-Queries the Sailaway servers for information on your boats, and logs their position and other relevant information to a locally-stored log. You can then browse your logbooks, or plot your boats' position using OpenSeaMap or EarthWindMap.
+```
+nmea
+```
+The NMEA server only. Select one of your boats to start a TCP server and send NMEA sentences to an external charting application.
+
+```
+wipelogs
+```
+Wipes your locally-stored sailing logbooks.
+
 
 ## How to install
 
