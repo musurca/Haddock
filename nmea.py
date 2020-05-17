@@ -124,7 +124,7 @@ class NMEAServer:
         # Position
         sGPGLL = nmea.formatSentence("GPGLL," + posStr + "," + timeStr + ",A")
         # Position (GPS)
-        sGPGAA = nmea.formatSentence("GPGAA," + timeStr + "," + posStr + ",8,10,0,0,M,,,,")
+        sGPGAA = nmea.formatSentence("GPGAA," + timeStr + "," + posStr + ",1,08,0,0,M,,,,")
         # true heading
         sIIHDT = nmea.formatSentence("IIHDT," + hdgStr)
         # true wind speed & angle
