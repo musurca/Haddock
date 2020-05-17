@@ -51,6 +51,7 @@ class NMEAServer:
             sys.exit("Cannot bind socket to port " + str(port))
         self.clients = []
         self.listener = None
+        self.sender = None
         self.sentence = None
 
     def listen(self):
@@ -60,20 +61,34 @@ class NMEAServer:
                 client, addr = self.sock.accept()
             except socket.error as msg:
                 break
-            #print ("Connected to client @ " + str(addr[0]) + ":" + str(addr[1]))
             self.clients.append(client)
-            # immediately send latest update, if any
-            if self.sentence != None:
-                client.send(self.sentence)
+            if len(self.clients) == 1:
+                self.startUpdates()
+
+    def startUpdates(self):
+        self.refresh()
+
+    def stopUpdates(self):
+        if self.sender != None:
+            self.sender.cancel()
+            self.sender = None
 
     def start(self):
         self.listener = threading.Thread(target=NMEAServer.listen, args=(self,))
         self.listener.start()
     
     def stop(self):
+        self.stopUpdates()
         for client in self.clients:
             client.close()
         self.sock.close()
+
+    # Send updates to all clients every 2 seconds
+    def refresh(self):
+        if self.sentence != None:
+            self.sendAll(self.sentence)
+        self.sender = threading.Timer(2, NMEAServer.refresh, args=(self,))
+        self.sender.start()
 
     def sendAll(self, msg):
         badClients = []
@@ -90,6 +105,8 @@ class NMEAServer:
         # remove disconnected clients from list
         for client in badClients:
             self.clients.remove(client)
+        if len(self.clients) == 0:
+            self.stopUpdates()
 
     def update(self, lat, lon, hdg, sog, cog, twd, tws, curTime):
         timeStr = curTime.strftime(NMEA_TIME_FORMAT)
@@ -107,7 +124,7 @@ class NMEAServer:
         # Position
         sGPGLL = nmea.formatSentence("GPGLL," + posStr + "," + timeStr + ",A")
         # Position (GPS)
-        sGPGAA = nmea.formatSentence("GPGAA," + timeStr + "," + posStr + ",1,04,0,0,M,,,,")
+        sGPGAA = nmea.formatSentence("GPGAA," + timeStr + "," + posStr + ",8,10,0,0,M,,,,")
         # true heading
         sIIHDT = nmea.formatSentence("IIHDT," + hdgStr)
         # true wind speed & angle
@@ -116,9 +133,6 @@ class NMEAServer:
         sGPRMC = nmea.formatSentence("GPRMC," + timeStr + ",A," + posStr + "," + sogStr + "," + cogStr + "," + dateStr + ",,,")
 
         self.sentence = sOrigin + sGPGLL + sGPGAA + sIIHDT + sWIMWV + sGPRMC
-
-        # Send sentence to all clients on a separate thread
-        threading.Thread(target=NMEAServer.sendAll, args=(self,self.sentence,)).start()
 
 class NMEAUpdater:
     def __init__(self):
@@ -178,9 +192,12 @@ class NMEAUpdater:
     def refresh(self):
         # schedule next update
         curTime = datetime.utcnow()
-        nextUpdateTime = sailaway.updateInterval() - (curTime - self.api.lastUpdate).total_seconds() + 1
-        self.updateThread = threading.Timer(nextUpdateTime, NMEAUpdater.queryAndUpdate, args=(self,))
-        self.updateThread.start()
+        nextUpdateTime = sailaway.updateInterval() - (curTime - self.api.lastUpdate).total_seconds()
+        if nextUpdateTime > 0:
+            self.updateThread = threading.Timer(nextUpdateTime, NMEAUpdater.queryAndUpdate, args=(self,))
+            self.updateThread.start()
+        else:
+            self.queryAndUpdate()
 
     def queryAndUpdate(self):
         # retrieve data from cache or server
