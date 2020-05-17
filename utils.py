@@ -20,6 +20,20 @@ class units:
         if len(numStr) == 1:
             return "0"+numStr
         return numStr
+    
+    def enforceDigitsLeading(numStr, maxDig):
+        digits = len(numStr)
+        if digits < maxDig:
+            for i in range(maxDig-digits):
+                numStr = "0" + numStr
+        return numStr
+        
+    def enforceDigitsTrailing(numStr, maxDig):
+        digits = len(numStr)
+        if digits < maxDig:
+            for i in range(maxDig-digits):
+                numStr = numStr + "0"
+        return numStr
 
 class geo:
     def latlon_to_nmea(lat, lon):
@@ -34,22 +48,19 @@ class geo:
         if lonDeg > 0:
             lonDir = "E"
         else:
-            lonDir = "W"
-        latMinStr = str(round(latMin,2))
+            lonDir = "W"    
+
+        latMinStr = str(round(latMin,4))
         latMinMajorStr = latMinStr[:latMinStr.find(".")]
         latMinMinorStr = latMinStr[latMinStr.find(".")+1:]
-        if len(latMinMajorStr) < 2:
-            latMinMajorStr = "0" + latMinMajorStr
-        if len(latMinMinorStr) < 2:
-            latMinMinorStr = latMinMinorStr + "0"
+        latMinMajorStr = units.enforceDigitsLeading(latMinMajorStr, 2)
+        latMinMinorStr = units.enforceDigitsTrailing(latMinMinorStr, 4)
         latMinStr = latMinMajorStr + "." + latMinMinorStr
-        lonMinStr = str(round(lonMin,2))
+        lonMinStr = str(round(lonMin,4))
         lonMinMajorStr = lonMinStr[:lonMinStr.find(".")]
         lonMinMinorStr = lonMinStr[lonMinStr.find(".")+1:]
-        if len(lonMinMajorStr) < 2:
-            lonMinMajorStr = "0" + lonMinMajorStr
-        if len(lonMinMinorStr) < 2:
-            lonMinMinorStr = lonMinMinorStr + "0"
+        lonMinMajorStr = units.enforceDigitsLeading(lonMinMajorStr, 2)
+        lonMinMinorStr = units.enforceDigitsTrailing(lonMinMinorStr, 4)
         lonMinStr = lonMinMajorStr + "." + lonMinMinorStr
 
         return str(int(abs(latDeg)))+latMinStr + "," + latDir + "," + str(int(abs(lonDeg)))+lonMinStr + "," + lonDir
@@ -70,18 +81,14 @@ class geo:
         latMinStr = str(round(latMin,2))
         latMinMajorStr = latMinStr[:latMinStr.find(".")]
         latMinMinorStr = latMinStr[latMinStr.find(".")+1:]
-        if len(latMinMajorStr) < 2:
-            latMinMajorStr = "0" + latMinMajorStr
-        if len(latMinMinorStr) < 2:
-            latMinMinorStr = latMinMinorStr + "0"
+        latMinMajorStr = units.enforceDigitsLeading(latMinMajorStr, 2)
+        latMinMinorStr = units.enforceDigitsTrailing(latMinMinorStr, 2)
         latMinStr = latMinMajorStr + "." + latMinMinorStr
         lonMinStr = str(round(lonMin,2))
         lonMinMajorStr = lonMinStr[:lonMinStr.find(".")]
         lonMinMinorStr = lonMinStr[lonMinStr.find(".")+1:]
-        if len(lonMinMajorStr) < 2:
-            lonMinMajorStr = "0" + lonMinMajorStr
-        if len(lonMinMinorStr) < 2:
-            lonMinMinorStr = lonMinMinorStr + "0"
+        lonMinMajorStr = units.enforceDigitsLeading(lonMinMajorStr, 2)
+        lonMinMinorStr = units.enforceDigitsTrailing(lonMinMinorStr, 2)
         lonMinStr = lonMinMajorStr + "." + lonMinMinorStr
 
         return (latDir + str(int(abs(latDeg))) + "°" + latMinStr + "'", lonDir + str(int(abs(lonDeg))) + "°" + lonMinStr + "'")
