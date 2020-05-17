@@ -34,7 +34,7 @@ cd Haddock/
 
 ![API Example](https://github.com/musurca/Haddock/raw/master/img/apiexample.png)
 
-4) Open up `key.txt` in the repository, paste in your Sailaway API URL, and save it.
+4) In your Haddock folder, open up `key.txt` in a text editor, paste in your Sailaway API URL, and save it.
 
 ## Dependencies
 * [Python 3](https://www.python.org/downloads/)
