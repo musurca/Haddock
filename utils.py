@@ -68,11 +68,21 @@ class geo:
         else:
             lonDir = "W"
         latMinStr = str(round(latMin,2))
-        if len(latMinStr) < 5:
-            latMinStr = "0" + latMinStr
+        latMinMajorStr = latMinStr[:latMinStr.find(".")]
+        latMinMinorStr = latMinStr[latMinStr.find(".")+1:]
+        if len(latMinMajorStr) < 2:
+            latMinMajorStr = "0" + latMinMajorStr
+        if len(latMinMinorStr) < 2:
+            latMinMinorStr = latMinMinorStr + "0"
+        latMinStr = latMinMajorStr + "." + latMinMinorStr
         lonMinStr = str(round(lonMin,2))
-        if len(lonMinStr) < 5:
-            lonMinStr = "0" + lonMinStr
+        lonMinMajorStr = lonMinStr[:lonMinStr.find(".")]
+        lonMinMinorStr = lonMinStr[lonMinStr.find(".")+1:]
+        if len(lonMinMajorStr) < 2:
+            lonMinMajorStr = "0" + lonMinMajorStr
+        if len(lonMinMinorStr) < 2:
+            lonMinMinorStr = lonMinMinorStr + "0"
+        lonMinStr = lonMinMajorStr + "." + lonMinMinorStr
 
         return (latDir + str(int(abs(latDeg))) + "°" + latMinStr + "'", lonDir + str(int(abs(lonDeg))) + "°" + lonMinStr + "'")
 
