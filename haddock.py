@@ -13,10 +13,10 @@ import sys
 import math
 
 from rich.console import Console
-from rich.table import Column, Table, box
 from rich.markdown import Markdown
 
-from utils import sailaway, webviz, log, units, geo
+from nmea import NMEAUpdater
+from utils import webviz, log, units, geo
 
 MAX_LOG_ENTRIES = 8
 
@@ -39,19 +39,10 @@ def windSpeedToForceLevel(w):
 def windForceToDesc(f):
     forceStr = "F" + str(f)
     if f > 9:
-        forceStr = "`" + f + "`"
+        forceStr = "`" + forceStr + "`"
     elif f > 7:
-        forceStr = "**" + f + "**"
+        forceStr = "**" + forceStr + "**"
     return forceStr
-
-# wraps angle to range [0, 360)
-def wrap_angle(b):
-    deg = b
-    while deg < 0:
-        deg = 360+deg
-    while deg >= 360:
-        deg = deg-360
-    return deg
 
 # true if b is within (a-r, a+r]
 def withinAngleRange(b, a, r):
@@ -74,23 +65,21 @@ def sailAttitudeDesc(windAng):
 
 console = Console()
 
-# Initialize Sailaway API
-api = sailaway()
+# Initialize our NMEA server & background updater
+updater = NMEAUpdater()
+updater.start()
 
-# initialize our log
-logbook = log()
-logTime = log.zuluTime()
+# Initialize our logbook
+logbook = updater.getLogbook()
 
 while True:
-    if api.canUpdate():
-        # retrieve data from cache or server
-        boats = api.query()
+    boats = updater.getBoats()
 
     for i in range(len(boats)):
         boat = boats[i]
         boatSpeed = int(round(units.mps_to_kts(boat['sog']),0))
         windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
-        windDirection = wrap_angle(boat['twd'])
+        windDirection = geo.wrap_angle(boat['twd'])
         windForce = windSpeedToForceLevel(windSpeed)
         windForceStr = windForceToDesc(windForce)
         # sometimes these values are negative!
@@ -98,7 +87,7 @@ while True:
 
         boatLat, boatLon = geo.latlon_to_str(boat['latitude'], boat['longitude'])
 
-        boatHdg = wrap_angle(boat['cog'])
+        boatHdg = geo.wrap_angle(boat['cog'])
         headingTxt = headingDesc(boatHdg)
         heelAngle = abs(int(round(boat['heeldegrees'],0)))
 
@@ -115,7 +104,6 @@ while True:
         if heelAngle >= 30:
             print("")
             console.print(Markdown("### WARNING: Heel angle " + str(heelAngle) + "°"))
-        logbook.write(logTime, boat)
         print("")
 
     if len(boats) > 1:
@@ -123,6 +111,7 @@ while True:
         try:
             boatNum = int(boatNum)
         except ValueError:
+            updater.stop()
             sys.exit()
     else:
         boatNum = 0
@@ -135,6 +124,7 @@ while True:
             console.print(Markdown("**(1)** `Read the logbook`"))
             console.print(Markdown("**(2)** `Plot position on OpenSeaMap`"))
             console.print(Markdown("**(3)** `Plot position on EarthWindMap`"))
+            console.print(Markdown("**(4)** `Provide NMEA source to external charting app`"))
             print("")
             choice = input("Enter # of option (or press return to go back): ")
             try:
@@ -151,7 +141,7 @@ while True:
                 for entry in showEntries:
                     boatLat, boatLon = geo.latlon_to_str(float(entry['lat']), float(entry['lon']))
                     console.print(Markdown("**" + log.logTimeToString(entry) + "** - *" + boatLat + ", " + boatLon + "*"))
-                    console.print(Markdown("### Heading " + headingDesc(wrap_angle(float(entry['cog']))) + " / " + str(int(round(float(entry['sog']),0))) + " knots / " + forceDescription[windSpeedToForceLevel(float(entry['windspd']))]))
+                    console.print(Markdown("### Heading " + headingDesc(geo.wrap_angle(float(entry['cog']))) + " / " + str(int(round(float(entry['sog']),0))) + " knots / " + forceDescription[windSpeedToForceLevel(float(entry['windspd']))]))
                     print("")
                 if len(entries) > 2:
                     firstTime = entries[0]['zulu']
@@ -183,3 +173,11 @@ while True:
                     webviz.loadURL(webviz.openseamap(boatLat, boatLon))
                 else:
                     webviz.loadURL(webviz.earthwindmap(boatLat, boatLon))
+            elif choice == 4:
+                if boatNum == updater.getBoat():
+                    print("\nYou're already serving NMEA sentences for this boat!\n")
+                else:
+                    updater.setBoat(boatNum)
+                    print("\nNow serving NMEA sentences for this boat on port " + str(updater.getPort()) + ". This will continue in the background until you quit the application.\n")
+                input("(Press any key to continue)")
+updater.stop()
