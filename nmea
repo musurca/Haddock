@@ -1,1 +1,1 @@
-python3 nmea.py
+python3 nmea.py $1 $2

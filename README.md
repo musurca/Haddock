@@ -1,11 +1,8 @@
 # Haddock
 A CLI tool for tracking Sailaway voyages.
 
-## The Tools
+## HADDOCK
 
-```
-haddock
-```
 Queries the Sailaway servers for information on your boats, and logs their position and other relevant information to a locally-stored log.
 
 ![Haddock screen 1](https://github.com/musurca/Haddock/raw/master/img/haddockscreen1.png)
@@ -18,11 +15,27 @@ You can:
 ![Haddock screen 2](https://github.com/musurca/Haddock/raw/master/img/haddockscreen2.png)
 
 ```
-nmea
+usage: haddock [<port number>]
+
+OPTIONAL: <port number> specifies the port number for the NMEA TCP server (11010 by default).
+
 ```
+
+## NMEA
+
 The NMEA server only. Select one of your boats to start a TCP server and send NMEA sentences to an external charting application.
 
 ![NMEA screen 1](https://github.com/musurca/Haddock/raw/master/img/nmeascreen1.png)
+
+```
+usage: nmea [<port number>] [<boat number>]
+
+OPTIONAL: <port number> specifies the port number for the NMEA TCP server (11010 by default).
+
+OPTIONAL: <boat number> specifies the boat number for which to immediately launch a NMEA server.
+```
+
+## Other commands
 
 ```
 wipelogs

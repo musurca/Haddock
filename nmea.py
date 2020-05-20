@@ -22,8 +22,6 @@ BUFFER_SIZE = 1024
 NMEA_TIME_FORMAT = "%H%M%S"
 NMEA_DATE_FORMAT = "%d%m%y"
 
-VIRTUAL_ORIGIN = "SOL"
-
 class nmea:
     def formatSentence(msgStr,checksum=True):
         msgBytes = bytes(msgStr,'utf-8')
@@ -39,7 +37,7 @@ class nmea:
         return bytes(sentence, 'utf-8')
 
 class NMEAServer:
-    def __init__(self, port=SERVER_PORT):
+    def __init__(self, port):
         self.port = port
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -120,7 +118,7 @@ class NMEAServer:
 
         # Construct NMEA sentences
         # indicates what follows is from a virtual boat
-        sOrigin = nmea.formatSentence(VIRTUAL_ORIGIN, False)
+        sOrigin = nmea.formatSentence("SOL", False)
         # Position
         sGPGLL = nmea.formatSentence("GPGLL," + posStr + "," + timeStr + ",A")
         # Position (GPS)
@@ -135,17 +133,18 @@ class NMEAServer:
         self.sentence = sOrigin + sGPGLL + sGPGAA + sIIHDT + sWIMWV + sGPRMC
 
 class NMEAUpdater:
-    def __init__(self):
+    def __init__(self, port=SERVER_PORT):
         self.api = sailaway()
         self.logbook = saillog()
         self.isRunning = False
         self.updateThread = None
         self.boatNum = -1
         self.boats = []
+        self.serverport = port
     
     def start(self):
         # start the TCP server
-        self.server = NMEAServer()
+        self.server = NMEAServer(self.serverport)
         self.server.start()
         # start the update loop
         self.isRunning = True
@@ -211,26 +210,48 @@ class NMEAUpdater:
         # set up next update
         self.refresh()
 
+def printArgs():
+    sys.exit("\nusage: nmea [port number] [boat number]\n\nPort number is " + str(SERVER_PORT) + " by default.\n")
+
 if __name__ == '__main__':
+    port = SERVER_PORT
+    boatNum = -1
+
+    if len(sys.argv) > 1:
+        port = sys.argv[1]
+        try:
+            port = int(port)
+        except ValueError:
+            printArgs()
+    if len(sys.argv) > 2:
+        boatNum = sys.argv[2]
+        try:
+            boatNum = int(boatNum)
+        except ValueError:
+            printArgs() 
+
     console = Console()
 
-    updater = NMEAUpdater()
+    updater = NMEAUpdater(port)
     updater.start()
 
     boats = updater.getBoats()
     if len(boats) == 0:
         updater.stop()
         sys.exit("You don't have any boats to track.")
-
-    for i in range(len(boats)):
-        boat = boats[i]
-        console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
-    boatNum = input("Enter boat # for NMEA tracking (or press return to quit): ")
-    try:
-        boatNum = int(boatNum)
-    except ValueError:
-        updater.stop()
-        sys.exit()
+    if boatNum == -1:
+        for i in range(len(boats)):
+            boat = boats[i]
+            console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
+        boatNum = input("Enter boat # for NMEA tracking (or press return to quit): ")
+        try:
+            boatNum = int(boatNum)
+        except ValueError:
+            updater.stop()
+            sys.exit()
+    else:
+        boat = boats[boatNum]
+        console.print(Markdown("# (" + str(boatNum) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
             
     updater.setBoat(boatNum)
     print("NMEA server now listening on port " + str(updater.getPort()) + " - press return to quit.")

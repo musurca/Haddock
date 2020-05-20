@@ -1,1 +1,1 @@
-python3 haddock.py
+python3 haddock.py $1

@@ -69,10 +69,22 @@ def sailAttitudeDesc(windAng):
         if withinAngleRange(windAng, i*30, 30):
             return sailAttitudes[i]
 
+port = 10110
+
+def printArgs():
+    sys.exit("\nusage: haddock [port number]\n\nPort number is 10110 by default.\n")
+
+if len(sys.argv) > 1:
+    port = sys.argv[1]
+    try:
+        port = int(port)
+    except ValueError:
+        printArgs()
+
 console = Console()
 
 # Initialize our NMEA server & background updater
-updater = NMEAUpdater()
+updater = NMEAUpdater(port)
 updater.start()
 
 # Initialize our logbook
