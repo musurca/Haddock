@@ -197,6 +197,6 @@ while True:
                     print("\nYou're already serving NMEA sentences for this boat!\n")
                 else:
                     updater.setBoat(boatNum)
-                    print("\nNow serving NMEA sentences for this boat on port " + str(updater.getPort()) + ". This will continue in the background until you quit the application.\n")
+                    print("\nNow serving NMEA sentences for this boat on TCP port " + str(updater.getPort()) + ". This will continue in the background until you quit the application.\n")
                 input("(Press any key to continue)")
 updater.stop()

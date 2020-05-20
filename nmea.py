@@ -254,6 +254,6 @@ if __name__ == '__main__':
         console.print(Markdown("# (" + str(boatNum) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
             
     updater.setBoat(boatNum)
-    print("NMEA server now listening on port " + str(updater.getPort()) + " - press return to quit.")
+    print("NMEA server now listening on TCP port " + str(updater.getPort()) + " - press return to quit.")
     input("")
     updater.stop()

@@ -11,6 +11,8 @@ You can:
 - browse your logbooks
 - plot your boats' position using OpenSeaMap or EarthWindMap
 - send NMEA sentences from one boat to an external charting application like [qtVlm](https://www.meltemus.com/index.php/en/) or [OpenCPN](https://opencpn.org/), via a TCP server.
+
+While running, the application will automatically update every 10 minutes.
   
 ![Haddock screen 2](https://github.com/musurca/Haddock/raw/master/img/haddockscreen2.png)
 
@@ -23,7 +25,7 @@ OPTIONAL: <port number> specifies the port number for the NMEA TCP server (11010
 
 ## NMEA
 
-The NMEA server only. Select one of your boats to start a TCP server and send NMEA sentences to an external charting application.
+The NMEA server only. Select one of your boats to start a TCP server and send NMEA sentences to an external charting application. (The server will also continue to update your logbooks in the background.)
 
 ![NMEA screen 1](https://github.com/musurca/Haddock/raw/master/img/nmeascreen1.png)
 
