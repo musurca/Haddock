@@ -1,5 +1,5 @@
 # Haddock
-A CLI tool for tracking Sailaway voyages.
+CLI tools for tracking your Sailaway voyages, or connecting them to external charting/routing applications via NMEA.
 
 ## HADDOCK
 
