@@ -27,7 +27,7 @@ REQCACHE_FORMAT = "%Y_%m_%d_%H_%M_%S"
 class sailaway:
     def __init__(self):
         f = open(KEY_PATH, "r")
-        self.key = f.readline()
+        self.key = f.readline().rstrip()
         if self.key == "":
             sys.exit("You must first paste your API key into key.txt.")
         self.lastUpdate = None
