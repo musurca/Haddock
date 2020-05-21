@@ -3,6 +3,8 @@
 
     Queries the Sailaway servers, caches responses, and maintains
     local sailing logbook.
+
+    TODO: compress/decompress log
 '''
 import requests
 import json
@@ -17,6 +19,8 @@ from utils import db, units, geo
 KEY_PATH = "./key.txt"
 LOG_PATH = "./logs/"
 LOG_FILE = LOG_PATH + "logs.csv"
+
+CSV_TEMPLATE = ['boatid','zulu','lat','lon','cog','sog','windspd']
 
 # Sailaway API specifies a minimum of 10 minutes between requests
 UPDATE_INTERVAL = 600
@@ -109,6 +113,9 @@ class saillog:
             # create our logfile if it doesn't exist
             os.mkdir(LOG_PATH)
             self.wipe()
+        self.rebuildEntries()
+
+    def rebuildEntries(self):
         self.entries={}
         def addEntry(e):
             self.processEntry(e)
@@ -133,19 +140,32 @@ class saillog:
             prevEntries = self.entries[boatid]
             lastEntry = prevEntries[len(prevEntries)-1]
             delta = zulu - lastEntry['zulu']
-            if delta.seconds < sailaway.updateInterval():
+            if delta.total_seconds() < sailaway.updateInterval():
                 return
         zuluStr = zulu.strftime(TIME_FORMAT)
-        entry = [boat['ubtnr'], boat['boatname'], zuluStr, boat['latitude'], boat['longitude'], geo.wrap_angle(boat['cog']), units.mps_to_kts(boat['sog']), units.mps_to_kts(boat['tws'])]
+        entry = [boat['ubtnr'], zuluStr, boat['latitude'], boat['longitude'], geo.wrap_angle(boat['cog']), units.mps_to_kts(boat['sog']), units.mps_to_kts(boat['tws'])]
         with open(LOG_FILE,"a") as csvfile:
             logwriter = csv.writer(csvfile, delimiter=',')
             logwriter.writerow(entry)
-        self.processEntry({'boatid':entry[0],'name':entry[1],'zulu':entry[2],'lat':entry[3],'lon':entry[4],'cog':entry[5],'sog':entry[6],'windspd':entry[7]})
+        self.processEntry({'boatid':entry[0],'zulu':entry[1],'lat':entry[2],'lon':entry[3],'cog':entry[4],'sog':entry[5],'windspd':entry[6]})
+
+    def rewrite(self, includeId):
+        def isValidId(e):
+            return (e['boatid'] in includeId,)
+        validBoats = db.query(LOG_FILE, isValidId)
+        with open(LOG_PATH + "logstmp.csv","w") as csvfile:
+            logwriter = csv.writer(csvfile, delimiter=',')
+            logwriter.writerow(CSV_TEMPLATE)
+            for boat in validBoats:
+                logwriter.writerow([boat['boatid'],boat['zulu'],boat['lat'],boat['lon'],boat['cog'],boat['sog'],boat['windspd']])
+        os.remove(LOG_FILE)
+        os.rename(LOG_PATH+"logstmp.csv", LOG_FILE)
+        self.rebuildEntries()
 
     def wipe(self):
         with open(LOG_FILE,"w") as csvfile:
             logwriter = csv.writer(csvfile, delimiter=',')
-            logwriter.writerow(['boatid','name','zulu','lat','lon','cog','sog','windspd'])
+            logwriter.writerow(CSV_TEMPLATE)
         self.entries = {}
 
     def getLog(self, boatid):

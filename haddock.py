@@ -1,11 +1,7 @@
 '''
     haddock.py
 
-    TODO: delete log entries for defunct boats
     TODO: more log data viz -- distance since <date>? e.g.
-    TODO: probably remove boat names from the log
-    TODO: compress log with zlib
-    TODO: for destructive log changes, do work in temp then copy over
 '''
 
 import os
@@ -86,6 +82,9 @@ console = Console()
 # Initialize our NMEA server & background updater
 updater = NMEAUpdater(port)
 updater.start()
+
+console.print(Markdown("### **HADDOCK** " + NMEAUpdater.version()))
+print("")
 
 # Initialize our logbook
 logbook = updater.getLogbook()

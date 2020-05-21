@@ -40,9 +40,9 @@ OPTIONAL: <boat number> specifies the boat number for which to immediately launc
 ## Other commands
 
 ```
-wipelogs
+logmgr
 ```
-Wipes your locally-stored sailing logbooks.
+Manage your locally-stored sailing logbooks. You can delete entries for any defunct boats, or wipe the logs entirely.
 
 
 ## How to install

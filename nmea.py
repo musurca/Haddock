@@ -142,6 +142,9 @@ class NMEAUpdater:
         self.boats = []
         self.serverport = port
     
+    def version():
+        return "(v0.1)"
+
     def start(self):
         # start the TCP server
         self.server = NMEAServer(self.serverport)
@@ -234,6 +237,8 @@ if __name__ == '__main__':
 
     updater = NMEAUpdater(port)
     updater.start()
+    console.print(Markdown("### **NMEA** " + NMEAUpdater.version()))
+    print("")
 
     boats = updater.getBoats()
     if len(boats) == 0:
