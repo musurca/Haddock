@@ -75,3 +75,6 @@ Done! Run "haddock" to begin.
 * [Python 3](https://www.python.org/downloads/)
 * [rich](https://github.com/willmcgugan/rich)
 
+## Acknowledgements
+
+* U.S. Department of State Office of the Geographer - [World Water Body Limits Data Set](https://catalog.data.gov/dataset/world-water-body-limits-detailed-2017mar30)
