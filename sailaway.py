@@ -26,10 +26,12 @@ REQCACHE_FORMAT = "%Y_%m_%d_%H_%M_%S"
 
 class sailaway:
     def __init__(self):
+        if not os.path.exists(KEY_PATH):
+            sys.exit("Missing Sailaway API key. Run \"install\" first.")
         f = open(KEY_PATH, "r")
         self.key = f.readline().rstrip()
         if self.key == "":
-            sys.exit("You must first paste your API key into key.txt.")
+            sys.exit("Missing Sailaway API key. Run \"install\" first.")
         self.lastUpdate = None
 
     # clears cache and writes latest update to it
