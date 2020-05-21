@@ -1,5 +1,11 @@
+#!/bin/bash
 echo
 echo Installing haddock...
 pip --quiet install rich
+echo
+echo Paste your Sailaway API URL here, then press return:
+read key
+echo "$key" > key.txt
+echo
 echo Done! Run \"haddock\" to begin.
 echo
