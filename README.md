@@ -49,7 +49,7 @@ Manage your locally-stored sailing logbooks. You can delete entries for any defu
 
 1) [Download and install the latest release of Python 3.](https://www.python.org/downloads/)
 
-2) [Download the latest release of Haddock](https://github.com/musurca/Haddock/archive/master.zip), and unzip it to a directory of your choice, e.g. ```~/haddock```.
+2) [Download the latest release of Haddock](https://github.com/musurca/Haddock/releases/download/v0.1/haddock_v0.1.zip), and unzip it to a directory of your choice, e.g. ```~/haddock```.
 
 3) Log into your [Sailaway account](https://sailaway.world/myaccount.pl) and copy the URL below the line that reads "API access to all sailing related parameters of your boats."
 
