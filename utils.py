@@ -36,6 +36,32 @@ class units:
         return numStr
 
 class geo:
+    def nearestSea(lat, lon):
+        # true if a is inside the range [b, c]
+        def within(a, b, c):
+            if b > c:
+                c,b=b,c
+            return a >= b and a <= c
+
+        def inBbox(e):
+            lat0,lon0 = float(e['lat0']),float(e['lon0'])
+            lat1,lon1 = float(e['lat1']),float(e['lon1'])
+            clat,clon = float(e['clat']),float(e['clon'])
+            dist = geo.dist_coord(lat, lon, clat, clon)
+            return (within(lat, lat0, lat1) and within(lon, lon0, lon1),dist)
+
+        def saveDist(e, args):
+            e['dist'] = args[0]
+
+        def sortDist(e):
+            return e['dist']
+
+        seas = db.query("./data/worldseas.csv", inBbox, saveDist)
+        seas.sort(key=sortDist)
+        if len(seas) > 0:
+            return seas[0]['name']
+        return ""
+
     def latlon_to_nmea(lat, lon):
         latDeg = lat
         latMin = (latDeg - math.floor(latDeg))*60

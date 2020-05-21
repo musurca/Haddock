@@ -105,6 +105,7 @@ while True:
         voyDiv = voyageStr.find(" -> ")
         origin = voyageStr[0:voyDiv]
         dest = voyageStr[voyDiv+4:]
+        locName = geo.nearestSea(boat['latitude'], boat['longitude'])
 
         windSpeed = int(round(units.mps_to_kts(boat['tws']),0))
         windDirection = geo.wrap_angle(boat['twd'])
@@ -117,7 +118,7 @@ while True:
         
         console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
         console.print(Markdown("**Destination:**\t" + dest))
-        console.print(Markdown("**Position:**\t" + boatLat + ", " + boatLon))
+        console.print(Markdown("**Position:**\t" + locName + " (" + boatLat + ", " + boatLon + ")"))
         console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + windForceDesc + " from " + windHeadingDesc + " at " + str(round(windSpeed,1)) + " knots "))
         console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt ))
         if heelAngle >= 30:
