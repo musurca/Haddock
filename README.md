@@ -47,7 +47,7 @@ Wipes your locally-stored sailing logbooks.
 
 ## How to install
 
-1) [Download and install latest release of Python 3.](https://www.python.org/downloads/)
+1) [Download and install the latest release of Python 3.](https://www.python.org/downloads/)
 
 2) Download the latest release of Haddock, and unzip it to a directory of your choice, e.g. ```~/haddock```.
 
@@ -55,9 +55,7 @@ Wipes your locally-stored sailing logbooks.
 
 ![API Example](https://github.com/musurca/Haddock/raw/master/img/apiexample.png)
 
-4) From the command line, change to your Haddock directory and run ```install```. When prompted, paste your Sailaway API URL into the terminal window, and press return.
-
-It should look something like this:
+4) From the command line, change to your Haddock directory and run ```install```. When prompted, paste your Sailaway API URL into the terminal window, and press return. It should look something like this:
 
 ```
 ~/haddock $ ./install
@@ -70,6 +68,8 @@ http://srv.sailaway.world/cgi-bin/sailaway/APIBoatInfo.pl?usrnr=69669&key=ZSDDSJ
 Done! Run "haddock" to begin.
 ```
 (Don't worry—if you mess it up, you can always run ```install``` again to start over.)
+
+5) Haddock has been successfully installed. 
 
 ## Dependencies
 * [Python 3](https://www.python.org/downloads/)
