@@ -49,11 +49,14 @@ Wipes your locally-stored sailing logbooks.
 
 1) [Download and install latest release of Python 3.](https://www.python.org/downloads/)
 
-2) From the command line:
+2) Download the latest release of Haddock, and unzip it to a directory of your choice, e.g. ```~/haddock```.
+
+3) From the command line, change to that directory and run ```install```. This will install all dependencies.
 ```
-pip install rich
-git clone https://github.com/musurca/Haddock.git
-cd Haddock/
+:~/haddock $ ./install
+
+Installing haddock...
+Done! Run "haddock" to begin.
 ```
 
 3) Log into your [Sailaway account](https://sailaway.world/myaccount.pl) and copy the URL below the line that reads "API access to all sailing related parameters of your boats."

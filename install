@@ -1,0 +1,5 @@
+echo
+echo Installing haddock...
+pip --quiet install rich
+echo Done! Run \"haddock\" to begin.
+echo
