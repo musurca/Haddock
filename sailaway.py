@@ -103,6 +103,9 @@ class sailaway:
 
 class saillog:
     def __init__(self):
+        if not os.path.exists(LOG_FILE):
+            # create our logfile if it doesn't exist
+            self.wipe()
         self.entries={}
         def addEntry(e):
             self.processEntry(e)
