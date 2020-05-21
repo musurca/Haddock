@@ -117,8 +117,8 @@ while True:
         sailAtt = sailAttitudeDesc(abs(boat['twa']))
         
         console.print(Markdown("# (" + str(i) + ") *" + boat['boatname'] + "* - " + boat['boattype']))
-        console.print(Markdown("**Destination:**\t" + dest))
         console.print(Markdown("**Position:**\t" + locName + " (" + boatLat + ", " + boatLon + ")"))
+        console.print(Markdown("**Destination:**\t" + dest))
         console.print(Markdown("**Conditions:**\t" + windForceStr + " - " + windForceDesc + " from " + windHeadingDesc + " at " + str(round(windSpeed,1)) + " knots "))
         console.print(Markdown("**Heading:**\t" + str(int(round(boatHdg,0))) + "° (" + headingTxt + ") at " + str(boatSpeed) + " knots, " + sailAtt ))
         if heelAngle >= 30:
