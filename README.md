@@ -69,7 +69,7 @@ Done! Run "haddock" to begin.
 ```
 (Don't worry—if you mess it up, you can always run ```install``` again to start over.)
 
-5) Haddock has been successfully installed. 
+5) Haddock has been successfully installed! You can run ```haddock``` or ```nmea`` to get started. 
 
 ## Dependencies
 * [Python 3](https://www.python.org/downloads/)
