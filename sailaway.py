@@ -105,6 +105,7 @@ class saillog:
     def __init__(self):
         if not os.path.exists(LOG_FILE):
             # create our logfile if it doesn't exist
+            os.mkdir(LOG_PATH)
             self.wipe()
         self.entries={}
         def addEntry(e):
