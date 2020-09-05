@@ -1,5 +1,5 @@
 
 key.txt
-logs/logs.csv
+logs
 *.pyc
 .DS_Store
