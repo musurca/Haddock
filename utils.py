@@ -74,8 +74,7 @@ class geo:
         if lonDeg > 0:
             lonDir = "E"
         else:
-            lonDir = "W"    
-
+            lonDir = "W"      
         latMinStr = str(round(latMin,4))
         latMinMajorStr = latMinStr[:latMinStr.find(".")]
         latMinMinorStr = latMinStr[latMinStr.find(".")+1:]
@@ -91,33 +90,21 @@ class geo:
 
         return str(int(abs(latDeg)))+latMinStr + "," + latDir + "," + str(int(abs(lonDeg)))+lonMinStr + "," + lonDir
 
-    def latlon_to_str(lat, lon):
-        latDeg = lat
-        latMin = (latDeg - math.floor(latDeg))*60
-        lonDeg = lon
-        lonMin = (lonDeg - math.floor(lonDeg))*60
-        if latDeg > 0:
-            latDir = "N"
-        else:
-            latDir = "S"
-        if lonDeg > 0:
-            lonDir = "E"
-        else:
-            lonDir = "W"
-        latMinStr = str(round(latMin,2))
-        latMinMajorStr = latMinStr[:latMinStr.find(".")]
-        latMinMinorStr = latMinStr[latMinStr.find(".")+1:]
-        latMinMajorStr = units.enforceDigitsLeading(latMinMajorStr, 2)
-        latMinMinorStr = units.enforceDigitsTrailing(latMinMinorStr, 2)
-        latMinStr = latMinMajorStr + "." + latMinMinorStr
-        lonMinStr = str(round(lonMin,2))
-        lonMinMajorStr = lonMinStr[:lonMinStr.find(".")]
-        lonMinMinorStr = lonMinStr[lonMinStr.find(".")+1:]
-        lonMinMajorStr = units.enforceDigitsLeading(lonMinMajorStr, 2)
-        lonMinMinorStr = units.enforceDigitsTrailing(lonMinMinorStr, 2)
-        lonMinStr = lonMinMajorStr + "." + lonMinMinorStr
+    def deg_to_dms(deg, type='lat'):
+        # source: https://stackoverflow.com/questions/2579535/convert-dd-decimal-degrees-to-dms-degrees-minutes-seconds-in-python
+        decimals, number = math.modf(deg)
+        d = int(number)
+        m = int(decimals * 60)
+        s = (deg - d - m / 60) * 3600.00
+        compass = {
+            'lat': ('N','S'),
+            'lon': ('E','W')
+        }
+        compass_str = compass[type][0 if d >= 0 else 1]
+        return '{}{}º{}\'{:.2f}"'.format(compass_str, abs(d), abs(m), abs(s))
 
-        return (latDir + str(int(abs(latDeg))) + "°" + latMinStr + "'", lonDir + str(int(abs(lonDeg))) + "°" + lonMinStr + "'")
+    def latlon_to_str(lat, lon):
+        return geo.deg_to_dms(lat,'lat'),geo.deg_to_dms(lon,'lon')
 
         # distance between two global points in nautical miles
     def dist_coord(lat1,lon1,lat2,lon2): 
