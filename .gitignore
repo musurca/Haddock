@@ -3,3 +3,4 @@ key.txt
 logs
 *.pyc
 .DS_Store
+clippings.py
