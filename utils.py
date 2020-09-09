@@ -74,8 +74,8 @@ class geo:
         
         if fmt=='nmea':
             # Formatted for NMEA server
-            m = round(decimals*60, 4)
-            return '{}{},{}'.format(abs(d), abs(m), compass_str)        
+            s, m = math.modf(decimals*60)
+            return '{}{}{},{}'.format(abs(d), str(int(abs(m))).zfill(2), str(abs(round(s,3)))[1:], compass_str)        
         
         # Formatted for printing to console
         m = int(decimals * 60)
