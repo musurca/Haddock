@@ -113,7 +113,7 @@ class NMEAServer:
         hdgStr = str(round(hdg,1)) + ",T"
         sogStr = str(round(sog,1))
         cogStr = str(round(cog,1))
-        twaStr = str(round(twd,1)) + ",T"
+        twaStr = str(round(geo.wrap_angle(twd-hdg),1)) + ",T"
         twsStr = str(round(tws,1)) + ",N"
 
         # Construct NMEA sentences
