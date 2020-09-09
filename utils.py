@@ -71,11 +71,16 @@ class geo:
             'lon': ('E','W')
         }
         compass_str = compass[type][0 if d >= 0 else 1]
-        
+
         if fmt=='nmea':
             # Formatted for NMEA server
+            # [D]DD|MM|.SSS,C
+            number_size = {
+                'lat': 2,
+                'lon': 3
+            }
             s, m = math.modf(decimals*60)
-            return '{}{}{},{}'.format(abs(d), str(int(abs(m))).zfill(2), str(abs(round(s,3)))[1:], compass_str)        
+            return '{}{}{},{}'.format(str(abs(d)).zfill(number_size[type]), str(int(abs(m))).zfill(2), str(abs(round(s,3)))[1:], compass_str)        
         
         # Formatted for printing to console
         m = int(decimals * 60)
