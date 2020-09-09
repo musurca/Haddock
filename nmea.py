@@ -144,7 +144,7 @@ class NMEAUpdater:
         self.serverport = port
     
     def version():
-        return "(v0.1.3)"
+        return "(v0.1.4)"
 
     def start(self):
         # start the TCP server
