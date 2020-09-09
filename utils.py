@@ -70,7 +70,7 @@ class geo:
             'lat': ('N','S'),
             'lon': ('E','W')
         }
-        compass_str = compass[type][0 if d >= 0 else 1]
+        compass_str = compass[type][0 if deg >= 0 else 1]
 
         if fmt=='nmea':
             # Formatted for NMEA server
