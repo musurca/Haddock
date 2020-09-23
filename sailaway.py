@@ -16,8 +16,8 @@ from datetime import datetime
 
 from utils import db, units, geo
 
-KEY_PATH = "./key.txt"
-LOG_PATH = "./logs/"
+KEY_PATH = "key.txt"
+LOG_PATH = "logs/"
 LOG_FILE = LOG_PATH + "logs.csv"
 
 CSV_TEMPLATE = ['boatid','zulu','lat','lon','cog','sog','windspd']
