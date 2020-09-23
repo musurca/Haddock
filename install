@@ -1,7 +1,7 @@
 #!/bin/bash
 echo
 echo Installing haddock...
-pip --quiet install rich
+pip --quiet install rich requests
 echo
 echo Paste your Sailaway API URL here, then press return:
 read key
