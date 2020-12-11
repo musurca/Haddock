@@ -87,6 +87,13 @@ class geo:
         s = (deg - d - m / 60) * 3600.00
         return '{}{}º{}\'{:.2f}"'.format(compass_str, abs(d), abs(m), abs(s))
         
+    def format_sog(sogStr:str):
+        decimalLoc = sogStr.find(".")
+        if decimalLoc == -1 or decimalLoc == (len(sogStr)-1):
+            return "{}.0".format(sogStr.zfill(3))
+        
+        return "{}.{}".format(sogStr[:decimalLoc].zfill(3), sogStr[decimalLoc+1:decimalLoc+2])
+
     def latlon_to_nmea(lat, lon):
         return geo.deg_to_dms(lat,'lat','nmea')+","+geo.deg_to_dms(lon,'lon','nmea')
 

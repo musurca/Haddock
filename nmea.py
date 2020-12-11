@@ -111,8 +111,8 @@ class NMEAServer:
         dateStr = curTime.strftime(NMEA_DATE_FORMAT)
         posStr = geo.latlon_to_nmea(lat, lon)
         hdgStr = str(round(hdg,1)) + ",T"
-        sogStr = str(round(sog,1))
-        cogStr = str(round(cog,1))
+        sogStr = geo.format_sog(str(round(sog,1)))
+        cogStr = geo.format_sog(str(round(cog,1)))
         # NMEA TWA is bearing, not heading
         twaStr = str(round(geo.wrap_angle(twd-hdg),1)) + ",T"
         twsStr = str(round(tws,1)) + ",N"
@@ -144,7 +144,7 @@ class NMEAUpdater:
         self.serverport = port
     
     def version():
-        return "(v0.1.4)"
+        return "(v0.1.4a)"
 
     def start(self):
         # start the TCP server
